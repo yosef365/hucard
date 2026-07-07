@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HuCard Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .dashboard { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .header button { padding: 10px 20px; background: #e74c3c; color: #fff; border: none; border-radius: 10px; cursor: pointer; }
+    .profile-card { background: #fff; padding: 20px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 12px; align-items: center; }
+    .profile-card input, .profile-card select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; }
+    .profile-card input[type="color"] { width: 50px; height: 40px; padding: 2px; cursor: pointer; }
+    .profile-card .actions { display: flex; gap: 8px; }
+    .profile-card .actions button { padding: 6px 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .save-btn { background: #2ecc71; color: #fff; }
+    .delete-btn { background: #e74c3c; color: #fff; }
+    .add-btn { background: #1a73e8; color: #fff; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; margin-bottom: 20px; cursor: pointer; }
+    .preview-link { color: #1a73e8; text-decoration: none; font-size: 14px; }
+    @media (max-width: 768px) { .profile-card { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="header">
+      <h1>📇 HuCard Admin</h1>
+      <button onclick="logout()">Sign Out</button>
+    </div>
+    <button class="add-btn" onclick="addProfile()">➕ Add New Profile</button>
+    <div id="profilesList"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabase = createClient(https://oypgqdlypqpvbdhvvgaa.supabase.co/rest/v1/ ,   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95cGdxZGx5cHFwdmJkaHZ2Z2FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NDkwMzksImV4cCI6MjA5OTAyNTAzOX0.XBqbsgprrbxSwsg5w_cy_OIUPmTnKRXUw_ToWrEatb8););
+
+    // Check if logged in
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) window.location.href = 'admin.html';
+    });
+
+    async function loadProfiles() {
+      const { data, error } = await supabase.from('profiles').select('*').order('name');
+      if (error) return alert('Error loading');
+      const container = document.getElementById('profilesList');
+      container.innerHTML = data.map(p => `
+        <div class="profile-card" data-id="${p.id}">
+          <input value="${p.name || ''}" placeholder="Name" data-field="name" />
+          <input value="${p.title || ''}" placeholder="Title" data-field="title" />
+          <input value="${p.phone || ''}" placeholder="Phone" data-field="phone" />
+          <input value="${p.email || ''}" placeholder="Email" data-field="email" />
+          <input type="color" value="${p.theme_color || '#1a73e8'}" data-field="theme_color" />
+          <div class="actions">
+            <button class="save-btn" onclick="saveProfile('${p.id}')">💾 Save</button>
+            <button class="delete-btn" onclick="deleteProfile('${p.id}')">🗑️</button>
+            <a href="index.html?id=${p.id}" target="_blank" class="preview-link">👁️</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function saveProfile(id) {
+      const card = document.querySelector(`.profile-card[data-id="${id}"]`);
+      const updates = {};
+      card.querySelectorAll('[data-field]').forEach(el => {
+        updates[el.dataset.field] = el.value;
+      });
+      const { error } = await supabase.from('profiles').update(updates).eq('id', id);
+      if (error) alert('Error saving: ' + error.message);
+      else alert('✅ Saved!');
+    }
+
+    async function deleteProfile(id) {
+      if (!confirm('Delete this profile?')) return;
+      await supabase.from('profiles').delete().eq('id', id);
+      loadProfiles();
+    }
+
+    async function addProfile() {
+      const newId = prompt('Enter a unique ID (e.g., "john-doe"):');
+      if (!newId) return;
+      const { error } = await supabase.from('profiles').insert([{ id: newId, name: 'New User' }]);
+      if (error) alert('Error: ' + error.message);
+      else loadProfiles();
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = 'admin.html';
+    }
+
+    loadProfiles();
+  </script>
+</body>
+</html>
