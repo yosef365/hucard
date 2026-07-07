@@ -1,4 +1,4 @@
-const supabase = createClient(https://oypgqdlypqpvbdhvvgaa.supabase.co/rest/v1/,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95cGdxZGx5cHFwdmJkaHZ2Z2FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NDkwMzksImV4cCI6MjA5OTAyNTAzOX0.XBqbsgprrbxSwsg5w_cy_OIUPmTnKRXUw_ToWrEatb8); );
+const supabase = createClient('https://oypgqdlypqpvbdhvvgaa.supabase.co/rest/v1/','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95cGdxZGx5cHFwdmJkaHZ2Z2FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NDkwMzksImV4cCI6MjA5OTAyNTAzOX0.XBqbsgprrbxSwsg5w_cy_OIUPmTnKRXUw_ToWrEatb8'); );
 
 const params = new URLSearchParams(window.location.search);
 const customerId = params.get('id') || 'dr-ahmed';
