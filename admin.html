@@ -1,42 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HuCard Admin Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .login-box { max-width: 380px; margin: 80px auto; padding: 40px; background: #fff; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
-    .login-box h1 { text-align: center; margin-bottom: 24px; }
-    .login-box input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; }
-    .login-box button { width: 100%; padding: 14px; background: #1a73e8; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
-    .login-box button:hover { background: #1557b0; }
-    .error { color: #d32f2f; text-align: center; margin-top: 12px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HuCard Admin Login</title>
+
+    <link rel="stylesheet" href="css/admin.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
 </head>
 <body>
-  <div class="login-box">
-    <h1>🔐 HuCard Admin</h1>
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
-    <button onclick="login()">Sign In</button>
-    <div id="errorMsg" class="error"></div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const supabase = createClient('https://oypgqdlypqpvbdhvvgaa.supabase.co/rest/v1/','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95cGdxZGx5cHFwdmJkaHZ2Z2FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NDkwMzksImV4cCI6MjA5OTAyNTAzOX0.XBqbsgprrbxSwsg5w_cy_OIUPmTnKRXUw_ToWrEatb8');
-    
-    async function login() {
-      const email = document.getElementById('email').value;
-      const pass = document.getElementById('password').value;
-      const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-      if (error) {
-        document.getElementById('errorMsg').textContent = 'Invalid credentials. Try again.';
-      } else {
-        window.location.href = 'dashboard.html';
-      }
-    }
-  </script>
+
+<div class="login-card">
+
+    <h1>HuCard</h1>
+
+    <p>Administrator Login</p>
+
+    <input
+        type="email"
+        id="email"
+        placeholder="Email">
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Password">
+
+    <button id="loginBtn">
+
+        Login
+
+    </button>
+
+    <p id="message"></p>
+
+</div>
+
+<script src="js/auth.js"></script>
+
 </body>
 </html>
