@@ -64,7 +64,21 @@ document
 document
 .getElementById("refreshDashboard")
 .addEventListener("click", initializeDashboard);
+// ================================
+// Search & Filters
+// ================================
 
+document
+.getElementById("searchProfile")
+.addEventListener("input", filterProfiles);
+
+document
+.getElementById("filterCompany")
+.addEventListener("change", filterProfiles);
+
+document
+.getElementById("filterStatus")
+.addEventListener("change", filterProfiles);
 // ================================
 // Modal
 // ================================
@@ -190,7 +204,7 @@ async function loadProfiles() {
 // Render Table
 // =====================================
 
-function renderProfiles() {
+function renderProfiles(data = profiles) {
 
     const tbody = document.getElementById("profilesTableBody");
 
@@ -206,7 +220,7 @@ function renderProfiles() {
 
     document.getElementById("emptyState").style.display = "none";
 
-    profiles.forEach(profile => {
+    data.forEach(profile => {
 
         tbody.innerHTML += `
 
@@ -515,5 +529,59 @@ ${theme.name}
 `;
 
     });
+
+}
+// =====================================
+// Filter Profiles
+// =====================================
+
+function filterProfiles(){
+
+    const keyword =
+        document.getElementById("searchProfile")
+        .value
+        .toLowerCase();
+
+    const company =
+        document.getElementById("filterCompany")
+        .value;
+
+    const status =
+        document.getElementById("filterStatus")
+        .value;
+
+    const filtered = profiles.filter(profile => {
+
+        const matchesKeyword =
+
+            (profile.name || "")
+            .toLowerCase()
+            .includes(keyword);
+
+        const matchesCompany =
+
+            company === "" ||
+
+            profile.company_id === company;
+
+        const matchesStatus =
+
+            status === "" ||
+
+            profile.status === status;
+
+        return (
+
+            matchesKeyword &&
+
+            matchesCompany &&
+
+            matchesStatus
+
+        );
+
+    });
+
+    renderProfiles(filtered);
 
 }
