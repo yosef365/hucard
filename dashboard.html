@@ -1,40 +1,333 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HuCard Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .dashboard { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-    .header button { padding: 10px 20px; background: #e74c3c; color: #fff; border: none; border-radius: 10px; cursor: pointer; }
-    .profile-card { background: #fff; padding: 20px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 12px; align-items: center; }
-    .profile-card input, .profile-card select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; }
-    .profile-card input[type="color"] { width: 50px; height: 40px; padding: 2px; cursor: pointer; }
-    .profile-card .actions { display: flex; gap: 8px; }
-    .profile-card .actions button { padding: 6px 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-    .save-btn { background: #2ecc71; color: #fff; }
-    .delete-btn { background: #e74c3c; color: #fff; }
-    .add-btn { background: #1a73e8; color: #fff; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; margin-bottom: 20px; cursor: pointer; }
-    .preview-link { color: #1a73e8; text-decoration: none; font-size: 14px; }
-    @media (max-width: 768px) { .profile-card { grid-template-columns: 1fr 1fr; } }
-  </style>
-</head>
-<body>
-  <div class="dashboard">
-    <div class="header">
-      <h1>📇 HuCard Admin</h1>
-      <button onclick="logout()">Sign Out</button>
-    </div>
-    <button class="add-btn" onclick="addProfile()">➕ Add New Profile</button>
-    <div id="profilesList"></div>
-  </div>
+<html lang="en">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>HuCard Dashboard</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet"
+          href="css/dashboard.css">
+
+</head>
+
+<body>
+
+<!-- =========================
+     Loading Screen
+========================= -->
+
+<div id="loading" class="loading-overlay">
+
+    <div class="spinner"></div>
+
+    <p>Loading Dashboard...</p>
+
+</div>
+
+<!-- =========================
+     Dashboard Container
+========================= -->
+
+<div class="dashboard-container">
+
+<!-- =========================
+     Sidebar
+========================= -->
+
+<aside class="sidebar">
+
+    <!-- Logo -->
+
+    <div class="logo">
+
+        <i class="fa-solid fa-id-card"></i>
+
+        <span>HuCard</span>
+
+    </div>
+
+    <!-- Navigation -->
+
+    <nav class="sidebar-menu">
+
+        <a href="#" class="active">
+
+            <i class="fa-solid fa-house"></i>
+
+            Dashboard
+
+        </a>
+
+        <a href="#">
+
+            <i class="fa-solid fa-address-card"></i>
+
+            Profiles
+
+        </a>
+
+        <a href="#">
+
+            <i class="fa-solid fa-building"></i>
+
+            Companies
+
+        </a>
+
+        <a href="#">
+
+            <i class="fa-solid fa-chart-line"></i>
+
+            Analytics
+
+        </a>
+
+        <a href="#">
+
+            <i class="fa-solid fa-palette"></i>
+
+            Themes
+
+        </a>
+
+        <a href="#">
+
+            <i class="fa-solid fa-database"></i>
+
+            Storage
+
+        </a>
+
+        <a href="#">
+
+            <i class="fa-solid fa-gear"></i>
+
+            Settings
+
+        </a>
+
+    </nav>
+
+    <!-- Sidebar Footer -->
+
+    <div class="sidebar-footer">
+
+        <button id="logoutBtn">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            Logout
+
+        </button>
+
+    </div>
+
+</aside>
+
+<!-- =========================
+     Main Content
+========================= -->
+
+<main class="main-content">
+
+<!-- =========================
+     Top Header
+========================= -->
+
+<header class="top-header">
+
+    <div class="header-left">
+
+        <h1>
+
+            Dashboard
+
+        </h1>
+
+        <p>
+
+            Welcome back,
+
+            <strong id="adminName">
+
+                Administrator
+
+            </strong>
+
+        </p>
+
+    </div>
+
+    <div class="header-right">
+
+        <!-- Search -->
+
+        <div class="header-search">
+
+            <i class="fa-solid fa-search"></i>
+
+            <input
+                type="text"
+                id="globalSearch"
+                placeholder="Search profiles...">
+
+        </div>
+
+        <!-- Notification -->
+
+        <button class="icon-btn">
+
+            <i class="fa-regular fa-bell"></i>
+
+        </button>
+
+        <!-- User -->
+
+        <button class="icon-btn">
+
+            <i class="fa-solid fa-user"></i>
+
+        </button>
+
+    </div>
+
+</header>
+
+<!-- =========================
+     Statistics
+========================= -->
+
+<section class="stats-grid">
+
+<div class="stat-card">
+
+    <div>
+
+        <small>Total Profiles</small>
+
+        <h2 id="totalProfiles">
+
+            0
+
+        </h2>
+
+    </div>
+
+    <i class="fa-solid fa-address-card"></i>
+
+</div>
+
+<div class="stat-card">
+
+    <div>
+
+        <small>Total Views</small>
+
+        <h2 id="totalViews">
+
+            0
+
+        </h2>
+
+    </div>
+
+    <i class="fa-solid fa-eye"></i>
+
+</div>
+
+<div class="stat-card">
+
+    <div>
+
+        <small>Companies</small>
+
+        <h2 id="totalCompanies">
+
+            0
+
+        </h2>
+
+    </div>
+
+    <i class="fa-solid fa-building"></i>
+
+</div>
+
+<div class="stat-card">
+
+    <div>
+
+        <small>Storage</small>
+
+        <h2 id="storageUsed">
+
+            0 MB
+
+        </h2>
+
+    </div>
+
+    <i class="fa-solid fa-database"></i>
+
+</div>
+
+</section>
+
+<!-- =========================
+     Quick Actions
+========================= -->
+
+<section class="quick-actions">
+
+<button id="addProfileBtn">
+
+    <i class="fa-solid fa-plus"></i>
+
+    New Profile
+
+</button>
+
+<button id="importBtn">
+
+    <i class="fa-solid fa-file-import"></i>
+
+    Import
+
+</button>
+
+<button id="exportBtn">
+
+    <i class="fa-solid fa-file-export"></i>
+
+    Export
+
+</button>
+
+<button id="qrManagerBtn">
+
+    <i class="fa-solid fa-qrcode"></i>
+
+    QR Manager
+
+</button>
+
+</section>
+
+<!-- ===== PART 2 STARTS BELOW THIS LINE ===== -->  <script>
     const supabase = createClient('https://oypgqdlypqpvbdhvvgaa.supabase.co/rest/v1/','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95cGdxZGx5cHFwdmJkaHZ2Z2FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NDkwMzksImV4cCI6MjA5OTAyNTAzOX0.XBqbsgprrbxSwsg5w_cy_OIUPmTnKRXUw_ToWrEatb8'););
 
     // Check if logged in
