@@ -820,3 +820,39 @@ async function saveSocialLinks(profileId){
     }
 
 }
+// =====================================
+// Generate QR URL
+// =====================================
+
+function getProfileUrl(slug){
+
+    return `${window.location.origin}${window.location.pathname.replace("dashboard.html","")}profile.html?slug=${slug}`;
+
+}
+// =====================================
+// QR Code
+// =====================================
+
+function showQRCode(slug){
+
+    document.getElementById("qrModal").style.display="flex";
+
+    const container=document.getElementById("qrContainer");
+
+    container.innerHTML="";
+
+    const url=getProfileUrl(slug);
+
+    new QRCode(container,{
+        text:url,
+        width:220,
+        height:220
+    });
+
+}
+
+function closeQRModal(){
+
+    document.getElementById("qrModal").style.display="none";
+
+}
