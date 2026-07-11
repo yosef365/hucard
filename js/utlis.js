@@ -1,89 +1,219 @@
-// =========================================
-// HuCard Utility Functions
-// =========================================
-
-// Show Success Message
-function showSuccess(message) {
-    alert("✅ " + message);
-}
-
-// Show Error Message
-function showError(message) {
-    alert("❌ " + message);
-}
-
-// Confirm Action
-function confirmAction(message = "Are you sure?") {
-    return confirm(message);
-}
-
-// Generate Random ID
-function randomID(length = 8) {
-
-    const chars =
-        "abcdefghijklmnopqrstuvwxyz0123456789";
-
-    let id = "";
-
-    for (let i = 0; i < length; i++) {
-
-        id += chars.charAt(
-            Math.floor(Math.random() * chars.length)
-        );
-
-    }
-
-    return id;
-}
-
-// Format Date
-function formatDate(date) {
-
-    return new Date(date).toLocaleDateString();
-
-}
-
-// Capitalize
-function capitalize(text) {
-
-    if (!text) return "";
-
-    return text.charAt(0).toUpperCase() +
-        text.slice(1);
-
-}
-
-// Open URL
-function openURL(url) {
-
-    window.open(url, "_blank");
-
-}
+// ==========================================
+// HuCard Utilities
+// ==========================================
 
 // Loading
-
 function showLoading() {
 
-    const loader = document.getElementById("loading");
+    const loader = document.getElementById("loadingOverlay");
 
-    if (loader) loader.style.display = "flex";
+    if (loader) {
+
+        loader.style.display = "flex";
+
+    }
 
 }
 
 function hideLoading() {
 
-    const loader = document.getElementById("loading");
+    const loader = document.getElementById("loadingOverlay");
 
-    if (loader) loader.style.display = "none";
+    if (loader) {
+
+        loader.style.display = "none";
+
+    }
 
 }
 
-// Copy Text
+// ==========================================
+// Toast
+// ==========================================
 
-async function copyText(text) {
+function showToast(title, message) {
 
-    await navigator.clipboard.writeText(text);
+    const toast = document.getElementById("toast");
 
-    showSuccess("Copied successfully.");
+    if (!toast) {
+
+        alert(title + "\n" + message);
+
+        return;
+
+    }
+
+    document.getElementById("toastTitle").textContent = title;
+
+    document.getElementById("toastMessage").textContent = message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 3500);
+
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const btn = document.getElementById("closeToast");
+
+    if (btn) {
+
+        btn.onclick = () => {
+
+            document
+                .getElementById("toast")
+                .classList
+                .remove("show");
+
+        };
+
+    }
+
+});
+
+// ==========================================
+// Confirm
+// ==========================================
+
+function confirmDelete(message = "Delete this profile?") {
+
+    return confirm(message);
+
+}
+
+// ==========================================
+// Date
+// ==========================================
+
+function formatDate(date) {
+
+    if (!date) return "";
+
+    return new Date(date).toLocaleDateString();
+
+}
+
+// ==========================================
+// UUID
+// ==========================================
+
+function generateSlug() {
+
+    return crypto.randomUUID();
+
+}
+
+// ==========================================
+// Safe Value
+// ==========================================
+
+function value(v) {
+
+    return v ?? "";
+
+}
+
+// ==========================================
+// Avatar
+// ==========================================
+
+function avatar(url) {
+
+    if (!url || url === "") {
+
+        return "https://placehold.co/150";
+
+    }
+
+    return url;
+
+}
+
+// ==========================================
+// Cover
+// ==========================================
+
+function cover(url) {
+
+    if (!url || url === "") {
+
+        return "https://placehold.co/900x250";
+
+    }
+
+    return url;
+
+}
+
+// ==========================================
+// Profile URL
+// ==========================================
+
+function getProfileUrl(slug) {
+
+    return `${window.location.origin}${window.location.pathname.replace("dashboard.html","")}profile.html?slug=${slug}`;
+
+}
+
+// ==========================================
+// Reset Form
+// ==========================================
+
+function clearProfileForm() {
+
+    editingProfile = null;
+
+    document.getElementById("profileId").value = "";
+
+    document.getElementById("fullName").value = "";
+
+    document.getElementById("jobTitle").value = "";
+
+    document.getElementById("profession").value = "";
+
+    document.getElementById("bio").value = "";
+
+    document.getElementById("phone").value = "";
+
+    document.getElementById("whatsapp").value = "";
+
+    document.getElementById("email").value = "";
+
+    document.getElementById("website").value = "";
+
+    document.getElementById("address").value = "";
+
+    document.getElementById("company").value = "";
+
+    document.getElementById("theme").value = "";
+
+    document.getElementById("status").value = "active";
+
+    document.getElementById("avatar").value = "";
+
+    document.getElementById("cover_image").value = "";
+
+    document.getElementById("avatarPreview").src =
+        "https://placehold.co/150";
+
+    document.getElementById("coverPreview").src =
+        "https://placehold.co/900x250";
+
+    document.getElementById("facebook").value = "";
+
+    document.getElementById("instagram").value = "";
+
+    document.getElementById("linkedin").value = "";
+
+    document.getElementById("telegram").value = "";
+
+    document.getElementById("tiktok").value = "";
+
+    document.getElementById("youtube").value = "";
 
 }
