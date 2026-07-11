@@ -572,33 +572,37 @@
         </button>
 
     </div>
-// =====================================
-// QR Code
-// =====================================
+<div id="qrModal" class="modal">
 
-function showQRCode(slug){
+    <div class="modal-content" style="max-width:450px;">
 
-    document.getElementById("qrModal").style.display="flex";
+        <div class="modal-header">
 
-    const container=document.getElementById("qrContainer");
+            <h2>QR Code</h2>
 
-    container.innerHTML="";
+            <button onclick="closeQRModal()">&times;</button>
 
-    const url=getProfileUrl(slug);
+        </div>
 
-    new QRCode(container,{
-        text:url,
-        width:220,
-        height:220
-    });
+        <div class="modal-body" style="text-align:center;">
 
-}
+            <div id="qrContainer"></div>
 
-function closeQRModal(){
+            <br>
 
-    document.getElementById("qrModal").style.display="none";
+            <button
+                class="primary-btn"
+                id="downloadQR">
 
-}
+                Download QR
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
     <!-- ================= SCRIPTS ================= -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
