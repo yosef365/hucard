@@ -1,10 +1,10 @@
-// =====================================
-// Dashboard Statistics
-// =====================================
+// ==========================================
+// HuCard Dashboard Statistics
+// ==========================================
 
-async function loadStatistics(){
+async function loadStatistics() {
 
-    try{
+    try {
 
         const [
 
@@ -12,47 +12,70 @@ async function loadStatistics(){
 
             companiesResult,
 
-            analyticsResult,
-
             qrResult
 
         ] = await Promise.all([
 
-            db.from("profiles")
-            .select("*",{count:"exact",head:true}),
+            db
+            .from("profiles")
+            .select("views", { count: "exact" }),
 
-            db.from("companies")
-            .select("*",{count:"exact",head:true}),
+            db
+            .from("companies")
+            .select("id", { count: "exact" }),
 
-            db.from("analytics")
-            .select("*",{count:"exact",head:true}),
-
-            db.from("qr_codes")
-            .select("*",{count:"exact",head:true})
+            db
+            .from("qr_codes")
+            .select("id", { count: "exact" })
 
         ]);
 
+        // -----------------------------
+        // Total Profiles
+        // -----------------------------
 
-        document.getElementById("totalProfiles").innerText =
-            profilesResult.count || 0;
+        const totalProfiles =
+            profilesResult.data?.length || 0;
 
+        document.getElementById("totalProfiles").textContent =
+            totalProfiles;
 
-        document.getElementById("totalCompanies").innerText =
+        // -----------------------------
+        // Total Companies
+        // -----------------------------
+
+        document.getElementById("totalCompanies").textContent =
             companiesResult.count || 0;
 
+        // -----------------------------
+        // Total Views
+        // -----------------------------
 
-        document.getElementById("totalViews").innerText =
-            analyticsResult.count || 0;
+        let totalViews = 0;
 
+        profilesResult.data.forEach(profile => {
 
-        document.getElementById("totalQrCodes").innerText =
+            totalViews += profile.views || 0;
+
+        });
+
+        document.getElementById("totalViews").textContent =
+            totalViews;
+
+        // -----------------------------
+        // Total QR
+        // -----------------------------
+
+        document.getElementById("totalQR").textContent =
             qrResult.count || 0;
 
     }
 
-    catch(err){
+    catch (err) {
 
         console.error(err);
+
+        showToast("Error", "Unable to load dashboard statistics.");
 
     }
 
