@@ -617,7 +617,7 @@ function filterProfiles(){
     renderProfiles(filtered);
 
 }
-// =====================================
+/*// =====================================
 // Dashboard Statistics
 // =====================================
 
@@ -675,7 +675,7 @@ async function loadStatistics(){
 
     }
 
-}
+}*/
 // =====================================
 // Load Social Links
 // =====================================
@@ -734,7 +734,7 @@ async function loadSocialLinks(profileId){
 
             break;
 
-            case "telegram":
+            case "telegram": 
 
                 telegram.value=link.url;
 
