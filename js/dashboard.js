@@ -585,3 +585,206 @@ function filterProfiles(){
     renderProfiles(filtered);
 
 }
+// =====================================
+// Dashboard Statistics
+// =====================================
+
+async function loadStatistics(){
+
+    try{
+
+        const [
+
+            profilesResult,
+
+            companiesResult,
+
+            analyticsResult,
+
+            qrResult
+
+        ] = await Promise.all([
+
+            db.from("profiles")
+            .select("*",{count:"exact",head:true}),
+
+            db.from("companies")
+            .select("*",{count:"exact",head:true}),
+
+            db.from("analytics")
+            .select("*",{count:"exact",head:true}),
+
+            db.from("qr_codes")
+            .select("*",{count:"exact",head:true})
+
+        ]);
+
+
+        document.getElementById("totalProfiles").innerText =
+            profilesResult.count || 0;
+
+
+        document.getElementById("totalCompanies").innerText =
+            companiesResult.count || 0;
+
+
+        document.getElementById("totalViews").innerText =
+            analyticsResult.count || 0;
+
+
+        document.getElementById("totalQrCodes").innerText =
+            qrResult.count || 0;
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+    }
+
+}
+// =====================================
+// Load Social Links
+// =====================================
+
+async function loadSocialLinks(profileId){
+
+    const {data,error} = await db
+
+    .from("social_links")
+
+    .select("*")
+
+    .eq("profile_id",profileId);
+
+
+    if(error){
+
+        console.error(error);
+
+        return;
+
+    }
+
+    document.getElementById("facebook").value="";
+
+    document.getElementById("instagram").value="";
+
+    document.getElementById("linkedin").value="";
+
+    document.getElementById("telegram").value="";
+
+    document.getElementById("tiktok").value="";
+
+    document.getElementById("youtube").value="";
+
+
+    data.forEach(link=>{
+
+        switch(link.platform){
+
+            case "facebook":
+
+                facebook.value=link.url;
+
+            break;
+
+            case "instagram":
+
+                instagram.value=link.url;
+
+            break;
+
+            case "linkedin":
+
+                linkedin.value=link.url;
+
+            break;
+
+            case "telegram":
+
+                telegram.value=link.url;
+
+            break;
+
+            case "tiktok":
+
+                tiktok.value=link.url;
+
+            break;
+
+            case "youtube":
+
+                youtube.value=link.url;
+
+            break;
+
+        }
+
+    });
+
+}
+
+// =====================================
+// Save Social Links
+// =====================================
+
+async function saveSocialLinks(profileId){
+
+    await db
+
+    .from("social_links")
+
+    .delete()
+
+    .eq("profile_id",profileId);
+
+
+    const links=[];
+
+    const add=(platform,id)=>{
+
+        const value=document.getElementById(id).value.trim();
+
+        if(value){
+
+            links.push({
+
+                profile_id:profileId,
+
+                platform,
+
+                url:value
+
+            });
+
+        }
+
+    };
+
+
+    add("facebook","facebook");
+
+    add("instagram","instagram");
+
+    add("linkedin","linkedin");
+
+    add("telegram","telegram");
+
+    add("tiktok","tiktok");
+
+    add("youtube","youtube");
+
+
+    if(links.length){
+
+        await db
+
+        .from("social_links")
+
+        .insert(links);
+
+    }
+
+}
