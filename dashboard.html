@@ -436,40 +436,55 @@
                 </div>
 
                 <!-- ================= UPLOAD ================= -->
+<!-- ================= UPLOAD ================= -->
 
-                <h3>Images</h3>
+<h3>Images</h3>
 
-                <div class="form-grid">
+<div class="form-grid">
 
-                    <div class="form-group">
+    <!-- Avatar -->
 
-                        <label>Avatar</label>
+    <div class="form-group">
 
-                        <input
+        <label>Avatar</label>
 
-                            id="avatarFile"
+        <input type="hidden" id="avatar">
 
-                            type="file"
+        <img
+            id="avatarPreview"
+            class="avatar-preview"
+            src="https://placehold.co/150"
+            alt="Avatar Preview">
 
-                            accept="image/*">
+        <input
+            id="avatarFile"
+            type="file"
+            accept="image/*">
 
-                    </div>
+    </div>
 
-                    <div class="form-group">
+    <!-- Cover -->
 
-                        <label>Cover Image</label>
+    <div class="form-group">
 
-                        <input
+        <label>Cover Image</label>
 
-                            id="coverFile"
+        <input type="hidden" id="cover_image">
 
-                            type="file"
+        <img
+            id="coverPreview"
+            class="cover-preview"
+            src="https://placehold.co/900x250"
+            alt="Cover Preview">
 
-                            accept="image/*">
+        <input
+            id="coverFile"
+            type="file"
+            accept="image/*">
 
-                    </div>
+    </div>
 
-                </div>
+</div>
 
                 <!-- ================= SOCIAL LINKS ================= -->
 
@@ -578,7 +593,7 @@
 
         <div class="modal-header">
 
-            <h2>QR Code</h2>
+            <h2 id="totalQrCodes">0</h2>
 
             <button onclick="closeQRModal()">&times;</button>
 
@@ -620,7 +635,7 @@
 
     <script src="js/dashboard.js"></script>
 
-</div>
+
 
 </body>
 
