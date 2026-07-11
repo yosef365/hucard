@@ -93,7 +93,7 @@ document
 
 // ================================
 
-function openAddProfile(){
+/*function openAddProfile(){
 
     editingProfile = null;
 
@@ -104,15 +104,15 @@ function openAddProfile(){
     clearProfileForm();
 
 }
-
+*/
 // ================================
 
-function closeProfileModal(){
+/*function closeProfileModal(){
 
     document.getElementById("profileModal").style.display="none";
 
 }
-
+*/
 // ================================
 
 function clearProfileForm(){
