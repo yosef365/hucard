@@ -117,43 +117,55 @@ function closeProfileModal(){
 
 function clearProfileForm(){
 
-    document.getElementById("profileId").value="";
+    editingProfile = null;
 
-    document.getElementById("fullName").value="";
+    document.getElementById("profileId").value = "";
 
-    document.getElementById("jobTitle").value="";
+    document.getElementById("fullName").value = "";
 
-    document.getElementById("profession").value="";
+    document.getElementById("jobTitle").value = "";
 
-    document.getElementById("bio").value="";
+    document.getElementById("profession").value = "";
 
-    document.getElementById("phone").value="";
+    document.getElementById("bio").value = "";
 
-    document.getElementById("whatsapp").value="";
+    document.getElementById("phone").value = "";
 
-    document.getElementById("email").value="";
+    document.getElementById("whatsapp").value = "";
 
-    document.getElementById("website").value="";
+    document.getElementById("email").value = "";
 
-    document.getElementById("address").value="";
+    document.getElementById("website").value = "";
 
-    document.getElementById("company").value="";
+    document.getElementById("address").value = "";
 
-    document.getElementById("theme").value="";
+    document.getElementById("company").value = "";
 
-    document.getElementById("status").value="active";
+    document.getElementById("theme").value = "";
 
-    document.getElementById("facebook").value="";
+    document.getElementById("status").value = "active";
 
-    document.getElementById("instagram").value="";
+    document.getElementById("avatar").value = "";
 
-    document.getElementById("linkedin").value="";
+    document.getElementById("cover_image").value = "";
 
-    document.getElementById("telegram").value="";
+    document.getElementById("avatarPreview").src =
+        "https://placehold.co/150";
 
-    document.getElementById("tiktok").value="";
+    document.getElementById("coverPreview").src =
+        "https://placehold.co/900x250";
 
-    document.getElementById("youtube").value="";
+    document.getElementById("facebook").value = "";
+
+    document.getElementById("instagram").value = "";
+
+    document.getElementById("linkedin").value = "";
+
+    document.getElementById("telegram").value = "";
+
+    document.getElementById("tiktok").value = "";
+
+    document.getElementById("youtube").value = "";
 
 }
 
