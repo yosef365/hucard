@@ -384,6 +384,11 @@ async function saveProfile() {
         company_id: document.getElementById("company").value || null,
 
         theme_id: document.getElementById("theme").value || null,
+        avatar:
+document.getElementById("avatar").value,
+
+cover_image:
+document.getElementById("cover_image").value,
 
         status: document.getElementById("status").value
 
