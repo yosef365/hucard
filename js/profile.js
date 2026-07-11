@@ -1,291 +1,404 @@
-// =========================================
-// HuCard Profile.js
+// ========================================
+// HuCard Public Profile
 // Part 1
-// =========================================
+// ========================================
 
-// Get profile ID from URL
-const params = new URLSearchParams(window.location.search);
-const profileId = params.get("id");
+// Current profile
+let profile = null;
 
-const container = document.getElementById("cardContainer");
+// ========================================
+// Initialize
+// ========================================
 
-if (!profileId) {
-    container.innerHTML = `
-        <div class="card">
-            <div class="content">
-                <h2>Profile ID Missing</h2>
-                <p>Use profile.html?id=your-id</p>
-            </div>
-        </div>
-    `;
-} else {
-    loadProfile();
+document.addEventListener("DOMContentLoaded", async () => {
+
+    const slug = getSlug();
+
+    if (!slug) {
+
+        showNotFound();
+
+        return;
+
+    }
+
+    await loadProfile(slug);
+
+});
+
+// ========================================
+// Get slug from URL
+// ========================================
+
+function getSlug() {
+
+    const params = new URLSearchParams(window.location.search);
+
+    return params.get("slug");
+
 }
 
-// =========================================
+// ========================================
+// Load Profile
+// ========================================
 
-async function loadProfile() {
-
-    container.innerHTML = `
-        <div class="loading">
-            <div class="loader"></div>
-            <p>Loading HuCard...</p>
-        </div>
-    `;
+async function loadProfile(slug) {
 
     const { data, error } = await db
+
         .from("profiles")
-        .select("*")
-        .eq("id", profileId)
+
+        .select(`
+            *,
+            companies(*),
+            themes(*)
+        `)
+
+        .eq("slug", slug)
+
         .single();
 
     if (error || !data) {
 
-        container.innerHTML = `
-            <div class="card">
-                <div class="content">
-                    <h2>Profile Not Found</h2>
-                    <p>${error ? error.message : ""}</p>
-                </div>
-            </div>
-        `;
+        console.error(error);
+
+        showNotFound();
 
         return;
+
     }
 
-    renderProfile(data);
+    profile = data;
+
+    renderProfile();
+
+    await increaseViews();
 
 }
 
-// =========================================
+// ========================================
+// Render Profile
+// ========================================
 
-function renderProfile(user) {
+function renderProfile() {
+
+    document.title = profile.name + " | HuCard";
+
+    document.getElementById("profileName").textContent =
+        profile.name || "";
+
+    document.getElementById("profileTitle").textContent =
+        profile.title || "";
+
+    document.getElementById("profession").textContent =
+        profile.profession || "";
+
+    document.getElementById("bio").textContent =
+        profile.bio || "";
+
+    document.getElementById("phone").textContent =
+        profile.phone || "";
+
+    document.getElementById("email").textContent =
+        profile.email || "";
+
+    document.getElementById("website").textContent =
+        profile.website || "";
+
+    document.getElementById("address").textContent =
+        profile.address || "";
+
+    document.getElementById("avatar").src =
+        profile.avatar || "images/avatar.png";
+
+    document.getElementById("coverImage").src =
+        profile.cover_image || "images/cover.jpg";
+
+    if (profile.companies) {
+
+        document.getElementById("companyName").textContent =
+            profile.companies.name;
+
+    }
+
+    applyTheme();
+
+}
+
+// ========================================
+// Apply Theme
+// ========================================
+
+function applyTheme() {
+
+    if (!profile.themes) return;
 
     document.documentElement.style.setProperty(
+
         "--primary",
-        user.theme_color || "#2563eb"
+
+        profile.themes.primary_color
+
     );
 
-    const avatar =
-        user.avatar && user.avatar !== ""
-            ? user.avatar
-            : "images/default-avatar.png";
+    document.documentElement.style.setProperty(
 
-    const cover =
-        user.cover_image && user.cover_image !== ""
-            ? user.cover_image
-            : "";
+        "--secondary",
 
-    const phoneButton = user.phone
-        ? `
-<a class="contact-item" href="tel:${user.phone}">
-<i class="fa-solid fa-phone"></i>
-<span>${user.phone}</span>
-</a>`
-        : "";
+        profile.themes.secondary_color
 
-    const emailButton = user.email
-        ? `
-<a class="contact-item" href="mailto:${user.email}">
-<i class="fa-solid fa-envelope"></i>
-<span>${user.email}</span>
-</a>`
-        : "";
+    );
 
-    const websiteButton = user.website
-        ? `
-<a class="contact-item"
-target="_blank"
-href="${user.website}">
-<i class="fa-solid fa-globe"></i>
-<span>Website</span>
-</a>`
-        : "";
+    document.documentElement.style.setProperty(
 
-    const whatsappButton = user.whatsapp
-        ? `
-<a class="contact-item"
-target="_blank"
-href="https://wa.me/${user.whatsapp.replace(/\D/g,'')}">
-<i class="fa-brands fa-whatsapp"></i>
-<span>WhatsApp</span>
-</a>`
-        : "";
+        "--background",
 
-    const addressButton = user.address
-        ? `
-<div class="contact-item">
-<i class="fa-solid fa-location-dot"></i>
-<span>${user.address}</span>
-</div>`
-        : "";
+        profile.themes.background_color
 
-    let socials = "";
+    );
 
-    if (user.facebook)
-        socials += `
-<a target="_blank"
-href="${user.facebook}">
-<i class="fab fa-facebook-f"></i>
-</a>`;
+    document.documentElement.style.setProperty(
 
-    if (user.linkedin)
-        socials += `
-<a target="_blank"
-href="${user.linkedin}">
-<i class="fab fa-linkedin-in"></i>
-</a>`;
+        "--text",
 
-    if (user.instagram)
-        socials += `
-<a target="_blank"
-href="${user.instagram}">
-<i class="fab fa-instagram"></i>
-</a>`;
+        profile.themes.text_color
 
-    if (user.telegram)
-        socials += `
-<a target="_blank"
-href="${user.telegram}">
-<i class="fab fa-telegram"></i>
-</a>`;
+    );
 
-    if (user.github)
-        socials += `
-<a target="_blank"
-href="${user.github}">
-<i class="fab fa-github"></i>
-</a>`;
+}
 
-    const qr =
-`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(window.location.href)}`;
+// ========================================
+// Increase Views
+// ========================================
 
-    container.innerHTML = `
+async function increaseViews() {
 
-<div class="card">
+    await db
 
-<div class="cover">
+        .from("profiles")
 
-${cover
-? `<img src="${cover}">`
-: ""}
+        .update({
 
-<img
-class="avatar"
-src="${avatar}"
-onerror="this.src='images/default-avatar.png'">
+            views: (profile.views || 0) + 1
 
-</div>
+        })
 
-<div class="content">
+        .eq("id", profile.id);
 
-<h1 class="name">
-${user.name || ""}
-</h1>
+}
 
-<p class="title">
-${user.title || ""}
-</p>
+// ========================================
 
-<p class="company">
-${user.company || ""}
-</p>
+function showNotFound() {
 
-<p class="bio">
-${user.bio || ""}
-</p>
+    document.body.innerHTML = `
 
-<div class="contact-list">
+    <div style="padding:100px;text-align:center">
 
-${phoneButton}
+        <h1>Profile Not Found</h1>
 
-${emailButton}
+        <p>This HuCard profile does not exist.</p>
 
-${websiteButton}
+    </div>
 
-${whatsappButton}
+    `;
 
-${addressButton}
-
-</div>
-
-<div class="buttons">
-
-<button
-class="btn"
-onclick="downloadVCard()">
-
-<i class="fa-solid fa-address-card"></i>
-
-Save Contact
-
-</button>
-
-<button
-class="btn secondary"
-onclick="shareCard()">
-
-<i class="fa-solid fa-share-nodes"></i>
-
-Share
-
-</button>
-
-</div>
-
-${socials
-?
-`<div class="socials">
-
-${socials}
-
-</div>`
-:
-""}
-
-<div class="qr">
-
-<img src="${qr}">
-
-</div>
-
-</div>
-
-</div>
-
-`;
-
-    // Save globally for Part 2
-    window.currentProfile = user;
-
-          }
-
-// =========================================
-// HuCard Profile.js
+}
+// ========================================
+// HuCard Public Profile
 // Part 2
-// =========================================
+// ========================================
 
-// Download vCard (.vcf)
-function downloadVCard() {
+// Load Social Links
+async function loadSocialLinks() {
 
-    if (!window.currentProfile) return;
+    const container = document.getElementById("socialLinks");
 
-    const p = window.currentProfile;
+    if (!container) return;
 
-    const vcard = `BEGIN:VCARD
+    const { data, error } = await db
+
+        .from("social_links")
+
+        .select("*")
+
+        .eq("profile_id", profile.id)
+
+        .order("platform");
+
+    if (error) {
+
+        console.error(error);
+
+        return;
+
+    }
+
+    container.innerHTML = "";
+
+    if (!data.length) {
+
+        container.style.display = "none";
+
+        return;
+
+    }
+
+    data.forEach(link => {
+
+        const a = document.createElement("a");
+
+        a.href = link.url;
+
+        a.target = "_blank";
+
+        a.rel = "noopener";
+
+        a.className = "social-btn";
+
+        a.innerHTML = getSocialIcon(link.platform);
+
+        container.appendChild(a);
+
+    });
+
+}
+
+// ========================================
+// Social Icons
+// ========================================
+
+function getSocialIcon(platform){
+
+    switch(platform.toLowerCase()){
+
+        case "facebook":
+            return '<i class="fab fa-facebook-f"></i>';
+
+        case "instagram":
+            return '<i class="fab fa-instagram"></i>';
+
+        case "linkedin":
+            return '<i class="fab fa-linkedin-in"></i>';
+
+        case "telegram":
+            return '<i class="fab fa-telegram"></i>';
+
+        case "tiktok":
+            return '<i class="fab fa-tiktok"></i>';
+
+        case "youtube":
+            return '<i class="fab fa-youtube"></i>';
+
+        case "x":
+        case "twitter":
+            return '<i class="fab fa-x-twitter"></i>';
+
+        default:
+            return '<i class="fas fa-link"></i>';
+
+    }
+
+}
+
+// ========================================
+// Save Analytics
+// ========================================
+
+async function saveAnalytics(){
+
+    try{
+
+        await db
+
+        .from("analytics")
+
+        .insert({
+
+            profile_id: profile.id,
+
+            browser: navigator.userAgent,
+
+            os: navigator.platform,
+
+            device:
+                window.innerWidth < 768
+                ? "Mobile"
+                : "Desktop"
+
+        });
+
+    }
+
+    catch(err){
+
+        console.log(err);
+
+    }
+
+}
+
+// ========================================
+// Share Profile
+// ========================================
+
+async function shareProfile(){
+
+    if(navigator.share){
+
+        try{
+
+            await navigator.share({
+
+                title: profile.name,
+
+                text: profile.title || "",
+
+                url: window.location.href
+
+            });
+
+        }
+
+        catch(e){}
+
+    }
+
+    else{
+
+        navigator.clipboard.writeText(
+
+            window.location.href
+
+        );
+
+        alert("Profile link copied.");
+
+    }
+
+}
+
+// ========================================
+// Download vCard
+// ========================================
+
+function downloadVCard(){
+
+    const vcf = `BEGIN:VCARD
 VERSION:3.0
-FN:${p.name || ""}
-ORG:${p.company || ""}
-TITLE:${p.title || ""}
-TEL;TYPE=CELL:${p.phone || ""}
-EMAIL:${p.email || ""}
-URL:${p.website || ""}
-ADR:;;${p.address || ""};;;;
-NOTE:${p.bio || ""}
+FN:${profile.name || ""}
+ORG:${profile.companies?.name || ""}
+TITLE:${profile.title || ""}
+TEL:${profile.phone || ""}
+EMAIL:${profile.email || ""}
+URL:${profile.website || ""}
+ADR:;;${profile.address || ""};;;;
 END:VCARD`;
 
-    const blob = new Blob([vcard], {
-        type: "text/vcard;charset=utf-8"
+    const blob = new Blob([vcf],{
+
+        type:"text/vcard"
+
     });
 
     const url = URL.createObjectURL(blob);
@@ -294,248 +407,76 @@ END:VCARD`;
 
     a.href = url;
 
-    a.download =
-        (p.id || "contact") + ".vcf";
-
-    document.body.appendChild(a);
+    a.download = `${profile.slug}.vcf`;
 
     a.click();
-
-    document.body.removeChild(a);
 
     URL.revokeObjectURL(url);
 
 }
 
-// =========================================
+// ========================================
+// QR Download
+// ========================================
 
-// Share Card
+function downloadQRCode(){
 
-async function shareCard() {
+    const qr = document.querySelector("#qrContainer canvas");
 
-    if (!window.currentProfile) return;
+    if(!qr) return;
 
-    const p = window.currentProfile;
+    const a = document.createElement("a");
 
-    if (navigator.share) {
+    a.download = profile.slug + "-qr.png";
 
-        try {
+    a.href = qr.toDataURL();
 
-            await navigator.share({
-
-                title: p.name,
-
-                text:
-                    `${p.name}
-${p.title || ""}
-${p.company || ""}`,
-
-                url: window.location.href
-
-            });
-
-        }
-
-        catch (e) {
-
-            console.log(e);
-
-        }
-
-    }
-
-    else {
-
-        copyLink();
-
-    }
+    a.click();
 
 }
 
-// =========================================
+// ========================================
+// Generate QR
+// ========================================
 
-// Copy URL
+function generateQRCode(){
 
-function copyLink() {
+    const container = document.getElementById("qrContainer");
 
-    navigator.clipboard.writeText(
+    if(!container) return;
 
-        window.location.href
+    container.innerHTML="";
 
-    ).then(() => {
+    new QRCode(container,{
 
-        alert("Profile link copied.");
+        text:window.location.href,
+
+        width:180,
+
+        height:180
 
     });
 
 }
 
-// =========================================
+// ========================================
+// Final Initialization
+// ========================================
 
-// Open Website
+document.addEventListener("DOMContentLoaded",async()=>{
 
-function openWebsite() {
+    const slug=getSlug();
 
-    if (
+    if(!slug) return;
 
-        window.currentProfile &&
+    await loadProfile(slug);
 
-        window.currentProfile.website
+    await loadSocialLinks();
 
-    ) {
+    await saveAnalytics();
 
-        window.open(
-
-            window.currentProfile.website,
-
-            "_blank"
-
-        );
-
-    }
-
-}
-
-// =========================================
-
-// Call
-
-function callPhone() {
-
-    if (
-
-        window.currentProfile &&
-
-        window.currentProfile.phone
-
-    ) {
-
-        location.href =
-
-            "tel:" +
-
-            window.currentProfile.phone;
-
-    }
-
-}
-
-// =========================================
-
-// Email
-
-function sendEmail() {
-
-    if (
-
-        window.currentProfile &&
-
-        window.currentProfile.email
-
-    ) {
-
-        location.href =
-
-            "mailto:" +
-
-            window.currentProfile.email;
-
-    }
-
-}
-
-// =========================================
-
-// WhatsApp
-
-function openWhatsApp() {
-
-    if (
-
-        window.currentProfile &&
-
-        window.currentProfile.whatsapp
-
-    ) {
-
-        const phone =
-
-            window.currentProfile.whatsapp.replace(
-
-                /\D/g,
-
-                ""
-
-            );
-
-        window.open(
-
-            "https://wa.me/" + phone,
-
-            "_blank"
-
-        );
-
-    }
-
-}
-
-// =========================================
-
-// Image fallback
-
-document.addEventListener(
-
-    "error",
-
-    function (e) {
-
-        if (
-
-            e.target.tagName === "IMG"
-
-        ) {
-
-            e.target.src =
-
-                "images/default-avatar.png";
-
-        }
-
-    },
-
-    true
-
-);
-
-// =========================================
-
-// Smooth Scroll
-
-window.scrollTo({
-
-    top: 0,
-
-    behavior: "smooth"
+    generateQRCode();
 
 });
 
-// =========================================
-
-// Console
-
-console.log(
-
-    "%cHuCard",
-
-    "color:#2563eb;font-size:22px;font-weight:bold"
-
-);
-
-console.log(
-
-    "HuCard loaded successfully."
-
-);
-
-// =========================================
+// ========================================
