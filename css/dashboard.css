@@ -471,6 +471,55 @@ tbody tr:hover{
     color:white;
 
 }
+/* ========================================= */
+/* IMAGE PREVIEW */
+/* ========================================= */
+
+.avatar-preview{
+
+    width:120px;
+
+    height:120px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    display:block;
+
+    margin:10px auto;
+
+    border:4px solid #e5e7eb;
+
+    background:#f8fafc;
+
+}
+
+.cover-preview{
+
+    width:100%;
+
+    height:180px;
+
+    object-fit:cover;
+
+    border-radius:12px;
+
+    display:block;
+
+    margin:10px 0;
+
+    border:2px solid #e5e7eb;
+
+    background:#f8fafc;
+
+}
+
+.form-group input[type=file]{
+
+    margin-top:10px;
+
+}
 /* ========================= */
 /* PAGINATION */
 /* ========================= */
