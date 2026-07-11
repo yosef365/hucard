@@ -323,6 +323,21 @@ async function editProfile(id) {
     document.getElementById("theme").value = profile.theme_id ?? "";
 
     document.getElementById("status").value = profile.status ?? "active";
+    document.getElementById("avatar").value =
+    profile.avatar || "";
+
+document.getElementById("cover_image").value =
+    profile.cover_image || "";
+
+document.getElementById("avatarPreview").src =
+    profile.avatar ||
+    "https://placehold.co/150";
+
+document.getElementById("coverPreview").src =
+    profile.cover_image ||
+    "https://placehold.co/900x250";
+
+await loadSocialLinks(profile.id);
 
     document.getElementById("profileModal").style.display = "flex";
 
