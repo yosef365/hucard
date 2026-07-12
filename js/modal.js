@@ -2,7 +2,7 @@
 // HuCard Modal Manager
 // ==========================================
 // This variable is shared with CRUD
-let editingProfile = null;
+
 // ==========================================
 // Open Add Profile
 // ==========================================
