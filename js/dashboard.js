@@ -133,19 +133,7 @@ async function logoutUser() {
 // Modal
 // ======================================
 
-function openAddProfile() {
 
-    editingProfile = null;
-
-    clearProfileForm();
-
-    document.getElementById("modalTitle").textContent =
-        "Add Profile";
-
-    document.getElementById("profileModal").style.display =
-        "flex";
-
-}
 
 function closeProfileModal() {
 
@@ -156,5 +144,4 @@ function closeProfileModal() {
 
 // ======================================
 
-window.openAddProfile = openAddProfile;
 window.closeProfileModal = closeProfileModal;
