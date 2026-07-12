@@ -70,15 +70,22 @@ async function uploadCover() {
 
 }
 
-document
+document.addEventListener("DOMContentLoaded", () => {
 
-.getElementById("avatarFile")
+    const avatar = document.getElementById("avatarFile");
 
-.addEventListener("change", uploadAvatar);
+    if (avatar) {
 
+        avatar.addEventListener("change", uploadAvatar);
 
-document
+    }
 
-.getElementById("coverFile")
+    const cover = document.getElementById("coverFile");
 
-.addEventListener("change", uploadCover);
+    if (cover) {
+
+        cover.addEventListener("change", uploadCover);
+
+    }
+
+});
