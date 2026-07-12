@@ -168,52 +168,66 @@ function clearProfileForm() {
 
     editingProfile = null;
 
-    document.getElementById("profileId").value = "";
+    [
+        "profileId",
+        "fullName",
+        "jobTitle",
+        "profession",
+        "bio",
+        "phone",
+        "whatsapp",
+        "email",
+        "website",
+        "address",
+        "company",
+        "theme",
+        "status",
+        "avatar",
+        "cover_image",
+        "facebook",
+        "instagram",
+        "linkedin",
+        "telegram",
+        "tiktok",
+        "youtube"
+    ].forEach(id => {
 
-    document.getElementById("fullName").value = "";
+        const el = document.getElementById(id);
 
-    document.getElementById("jobTitle").value = "";
+        if (!el) {
 
-    document.getElementById("profession").value = "";
+            console.error("Missing element:", id);
 
-    document.getElementById("bio").value = "";
+            return;
 
-    document.getElementById("phone").value = "";
+        }
 
-    document.getElementById("whatsapp").value = "";
+        if (el.tagName === "SELECT") {
 
-    document.getElementById("email").value = "";
+            el.selectedIndex = 0;
 
-    document.getElementById("website").value = "";
+        } else {
 
-    document.getElementById("address").value = "";
+            el.value = "";
 
-    document.getElementById("company").value = "";
+        }
 
-    document.getElementById("theme").value = "";
+    });
 
-    document.getElementById("status").value = "active";
+    const avatar = document.getElementById("avatarPreview");
 
-    document.getElementById("avatar").value = "";
+    if (avatar) {
 
-    document.getElementById("cover_image").value = "";
+        avatar.src = "https://placehold.co/150";
 
-    document.getElementById("avatarPreview").src =
-        "https://placehold.co/150";
+    }
 
-    document.getElementById("coverPreview").src =
-        "https://placehold.co/900x250";
+    const cover = document.getElementById("coverPreview");
 
-    document.getElementById("facebook").value = "";
+    if (cover) {
 
-    document.getElementById("instagram").value = "";
+        cover.src = "https://placehold.co/900x250";
 
-    document.getElementById("linkedin").value = "";
-
-    document.getElementById("telegram").value = "";
-
-    document.getElementById("tiktok").value = "";
-
-    document.getElementById("youtube").value = "";
+    }
 
 }
