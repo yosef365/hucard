@@ -1,6 +1,5 @@
 // ======================================
-// HuCard Dashboard
-// Main Controller
+// HuCard Dashboard Controller
 // ======================================
 
 let profiles = [];
@@ -13,18 +12,93 @@ let currentPage = 1;
 const pageSize = 10;
 
 // ======================================
-// Start Dashboard
+// Start
 // ======================================
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", initDashboard);
 
-    await checkLogin();
+async function initDashboard() {
 
-    initializeEvents();
+    try {
 
-    await initializeDashboard();
+        showLoading();
 
-});
+        if (typeof checkLogin === "function") {
+            await checkLogin();
+        }
+
+        bindEvents();
+
+        await Promise.all([
+            loadCompanies(),
+            loadThemes(),
+            loadProfiles(),
+            loadStatistics()
+        ]);
+
+    } catch (err) {
+
+        console.error("Dashboard Error:", err);
+
+        showToast("Error", err.message);
+
+    } finally {
+
+        hideLoading();
+
+    }
+
+}
+
+// ======================================
+// Events
+// ======================================
+
+function bindEvents() {
+
+    const logout = document.getElementById("logoutBtn");
+
+    if (logout) {
+        logout.onclick = logoutUser;
+    }
+
+    const refresh = document.getElementById("refreshDashboard");
+
+    if (refresh) {
+        refresh.onclick = initializeDashboard;
+    }
+
+    const search = document.getElementById("searchProfile");
+
+    if (search) {
+        search.oninput = filterProfiles;
+    }
+
+    const company = document.getElementById("filterCompany");
+
+    if (company) {
+        company.onchange = filterProfiles;
+    }
+
+    const status = document.getElementById("filterStatus");
+
+    if (status) {
+        status.onchange = filterProfiles;
+    }
+
+    const close = document.getElementById("closeProfileModal");
+
+    if (close) {
+        close.onclick = closeProfileModal;
+    }
+
+    const cancel = document.getElementById("cancelProfile");
+
+    if (cancel) {
+        cancel.onclick = closeProfileModal;
+    }
+
+}
 
 // ======================================
 
@@ -33,15 +107,10 @@ async function initializeDashboard() {
     showLoading();
 
     await Promise.all([
-
         loadCompanies(),
-
         loadThemes(),
-
         loadProfiles(),
-
         loadStatistics()
-
     ]);
 
     hideLoading();
@@ -49,46 +118,22 @@ async function initializeDashboard() {
 }
 
 // ======================================
-// Events
+// Logout
 // ======================================
 
-function initializeEvents(){
+async function logoutUser() {
 
-    document
-        .getElementById("logoutBtn")
-        .addEventListener("click", logout);
+    await db.auth.signOut();
 
-    document
-        .getElementById("refreshDashboard")
-        .addEventListener("click", initializeDashboard);
-
-    document
-        .getElementById("searchProfile")
-        .addEventListener("input", filterProfiles);
-
-    document
-        .getElementById("filterCompany")
-        .addEventListener("change", filterProfiles);
-
-    document
-        .getElementById("filterStatus")
-        .addEventListener("change", filterProfiles);
-
-    document
-        .getElementById("closeProfileModal")
-        .addEventListener("click", closeProfileModal);
-
-    document
-        .getElementById("cancelProfile")
-        .addEventListener("click", closeProfileModal);
+    location.href = "index.html";
 
 }
 
 // ======================================
-// Open Add Profile
+// Modal
 // ======================================
 
-function openAddProfile(){
+function openAddProfile() {
 
     editingProfile = null;
 
@@ -102,11 +147,7 @@ function openAddProfile(){
 
 }
 
-// ======================================
-// Close Modal
-// ======================================
-
-function closeProfileModal(){
+function closeProfileModal() {
 
     document.getElementById("profileModal").style.display =
         "none";
@@ -114,114 +155,6 @@ function closeProfileModal(){
 }
 
 // ======================================
-// Clear Form
-// ======================================
 
-function clearProfileForm(){
-
-    editingProfile = null;
-
-    document.getElementById("profileId").value = "";
-
-    document.getElementById("fullName").value = "";
-
-    document.getElementById("jobTitle").value = "";
-
-    document.getElementById("profession").value = "";
-
-    document.getElementById("bio").value = "";
-
-    document.getElementById("phone").value = "";
-
-    document.getElementById("whatsapp").value = "";
-
-    document.getElementById("email").value = "";
-
-    document.getElementById("website").value = "";
-
-    document.getElementById("address").value = "";
-
-    document.getElementById("company").value = "";
-
-    document.getElementById("theme").value = "";
-
-    document.getElementById("status").value = "active";
-
-    document.getElementById("avatar").value = "";
-
-    document.getElementById("cover_image").value = "";
-
-    document.getElementById("avatarPreview").src =
-        "https://placehold.co/150";
-
-    document.getElementById("coverPreview").src =
-        "https://placehold.co/900x250";
-
-    document.getElementById("facebook").value = "";
-
-    document.getElementById("instagram").value = "";
-
-    document.getElementById("linkedin").value = "";
-
-    document.getElementById("telegram").value = "";
-
-    document.getElementById("tiktok").value = "";
-
-    document.getElementById("youtube").value = "";
-
-}
-
-// ======================================
-// Search
-// ======================================
-
-function filterProfiles(){
-
-    const keyword = document
-        .getElementById("searchProfile")
-        .value
-        .toLowerCase();
-
-    const company =
-        document.getElementById("filterCompany").value;
-
-    const status =
-        document.getElementById("filterStatus").value;
-
-    const filtered = profiles.filter(profile=>{
-
-        const matchKeyword =
-
-            (profile.name || "")
-
-            .toLowerCase()
-
-            .includes(keyword);
-
-        const matchCompany =
-
-            company==="" ||
-
-            profile.company_id===company;
-
-        const matchStatus =
-
-            status==="" ||
-
-            profile.status===status;
-
-        return (
-
-            matchKeyword &&
-
-            matchCompany &&
-
-            matchStatus
-
-        );
-
-    });
-
-    renderProfiles(filtered);
-
-}
+window.openAddProfile = openAddProfile;
+window.closeProfileModal = closeProfileModal;
