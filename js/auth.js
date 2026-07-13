@@ -41,28 +41,17 @@ async function login() {
 
 async function checkLogin() {
 
-    const {
+    const { data, error } = await db.auth.getSession();
 
-        data: {
+    console.log("Session:", data.session);
 
-            session
-
-        }
-
-    } = await db.auth.getSession();
-
-    if (!session) {
-
-        location.href = "index.html";
-
+    if (!data.session) {
+        alert("No session found");
         return null;
-
     }
 
-    return session.user;
-
+    return data.session.user;
 }
-
 async function getCurrentUser() {
 
     const {
