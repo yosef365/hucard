@@ -1,147 +1,58 @@
-// ======================================
+// =====================================
 // HuCard Dashboard Controller
-// ======================================
+// =====================================
 
 let profiles = [];
 let companies = [];
 let themes = [];
-
 let editingProfile = null;
 
-let currentPage = 1;
-const pageSize = 10;
+document.addEventListener("DOMContentLoaded", async () => {
 
-// ======================================
-// Start
-// ======================================
+    const user = await checkLogin();
 
-document.addEventListener("DOMContentLoaded", initDashboard);
+    if (!user) return;
 
-async function initDashboard() {
+    bindEvents();
 
-    try {
+    await initializeDashboard();
 
-        showLoading();
-
-        if (typeof checkLogin === "function") {
-            await checkLogin();
-        }
-
-        bindEvents();
-
-        await Promise.all([
-            loadCompanies(),
-            loadThemes(),
-            loadProfiles(),
-            loadStatistics()
-        ]);
-
-    } catch (err) {
-
-        console.error("Dashboard Error:", err);
-
-        showToast("Error", err.message);
-
-    } finally {
-
-        hideLoading();
-
-    }
-
-}
-
-// ======================================
-// Events
-// ======================================
-
-function bindEvents() {
-
-    const logout = document.getElementById("logoutBtn");
-
-    if (logout) {
-        logout.onclick = logoutUser;
-    }
-
-    const refresh = document.getElementById("refreshDashboard");
-
-    if (refresh) {
-        refresh.onclick = initializeDashboard;
-    }
-
-    const search = document.getElementById("searchProfile");
-
-    if (search) {
-        search.oninput = filterProfiles;
-    }
-
-    const company = document.getElementById("filterCompany");
-
-    if (company) {
-        company.onchange = filterProfiles;
-    }
-
-    const status = document.getElementById("filterStatus");
-
-    if (status) {
-        status.onchange = filterProfiles;
-    }
-
-    const close = document.getElementById("closeProfileModal");
-
-    if (close) {
-        close.onclick = closeProfileModal;
-    }
-
-    const cancel = document.getElementById("cancelProfile");
-
-    if (cancel) {
-        cancel.onclick = closeProfileModal;
-    }
-
-}
-
-// ======================================
-
-async function initializeDashboard() {
+});
+async function initializeDashboard(){
 
     showLoading();
 
-    await Promise.all([
-        loadCompanies(),
-        loadThemes(),
-        loadProfiles(),
-        loadStatistics()
-    ]);
+    await loadCompanies();
+
+    await loadThemes();
+
+    await loadProfiles();
+
+    await loadStatistics();
 
     hideLoading();
 
 }
+function bindEvents(){
 
-// ======================================
-// Logout
-// ======================================
+    document
+    .getElementById("logoutBtn")
+    ?.addEventListener("click", logout);
 
-async function logoutUser() {
+    document
+    .getElementById("refreshDashboard")
+    ?.addEventListener("click", initializeDashboard);
 
-    await db.auth.signOut();
+    document
+    .getElementById("searchProfile")
+    ?.addEventListener("input", filterProfiles);
 
-    location.href = "index.html";
+    document
+    .getElementById("filterCompany")
+    ?.addEventListener("change", filterProfiles);
 
-}
-
-// ======================================
-// Modal
-// ======================================
-
-
-
-function closeProfileModal() {
-
-    document.getElementById("profileModal").style.display =
-        "none";
+    document
+    .getElementById("filterStatus")
+    ?.addEventListener("change", filterProfiles);
 
 }
-
-// ======================================
-
-window.closeProfileModal = closeProfileModal;
